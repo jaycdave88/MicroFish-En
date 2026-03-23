@@ -1866,12 +1866,16 @@ const truncateText = (text, maxLen) => {
   return text.substring(0, maxLen) + '...'
 }
 
+const escapeHtml = (str) => {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
+}
+
 const renderMarkdown = (content) => {
   if (!content) return ''
-  
-  // Remove leading H2 (## xxx) since section title is shown in outer layer
-  let processedContent = content.replace(/^##\s+.+\n+/, '')
-  
+
+  // Sanitize HTML entities before markdown processing to prevent XSS
+  let processedContent = escapeHtml(content).replace(/^##\s+.+\n+/, '')
+
   // Process code blocks
   let html = processedContent.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="code-block"><code>$2</code></pre>')
   

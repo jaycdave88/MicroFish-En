@@ -39,8 +39,9 @@ def create_app(config_class=Config):
         logger.info("MiroFish Backend starting...")
         logger.info("=" * 50)
     
-    # Enable CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # Enable CORS - restrict origins in production
+    cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+    CORS(app, resources={r"/api/*": {"origins": cors_origins}})
     
     # Register simulation process cleanup function (ensures all simulation processes are terminated on server shutdown)
     from .services.simulation_runner import SimulationRunner

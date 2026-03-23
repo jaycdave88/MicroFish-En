@@ -112,7 +112,11 @@ class ProjectManager:
     @classmethod
     def _get_project_dir(cls, project_id: str) -> str:
         """Get project directory path"""
-        return os.path.join(cls.PROJECTS_DIR, project_id)
+        # Prevent path traversal by ensuring project_id has no path separators
+        safe_id = os.path.basename(project_id)
+        if safe_id != project_id or '..' in project_id:
+            raise ValueError(f"Invalid project ID: {project_id}")
+        return os.path.join(cls.PROJECTS_DIR, safe_id)
     
     @classmethod
     def _get_project_meta_path(cls, project_id: str) -> str:

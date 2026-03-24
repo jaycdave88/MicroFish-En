@@ -39,8 +39,16 @@ def create_app(config_class=Config):
         logger.info("MiroFish Backend starting...")
         logger.info("=" * 50)
     
-    # Enable CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # Enable CORS - allow all localhost ports by default for local dev,
+    # restrict via CORS_ALLOWED_ORIGINS in production
+    cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS')
+    if cors_origins:
+        origins = [o.strip() for o in cors_origins.split(',')]
+    else:
+        # Local development: allow any localhost/127.0.0.1 origin
+        from flask_cors import CORS as _CORS  # noqa: F811
+        origins = r"https?://(localhost|127\.0\.0\.1)(:\d+)?"
+    CORS(app, resources={r"/api/*": {"origins": origins}})
     
     # Register simulation process cleanup function (ensures all simulation processes are terminated on server shutdown)
     from .services.simulation_runner import SimulationRunner

@@ -23,6 +23,10 @@ RUN npm ci \
 # Copy project source code
 COPY . .
 
+# Run as non-root user
+RUN useradd --create-home appuser && chown -R appuser:appuser /app
+USER appuser
+
 EXPOSE 3000 5001
 
 # Start both frontend and backend (development mode)

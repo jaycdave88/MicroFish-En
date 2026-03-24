@@ -8,7 +8,7 @@ import traceback
 import threading
 from flask import request, jsonify
 
-from . import graph_bp
+from . import graph_bp, error_response_body
 from ..config import Config
 from ..services.ontology_generator import OntologyGenerator
 from ..services.graph_builder import GraphBuilderService
@@ -247,11 +247,7 @@ def generate_ontology():
         })
         
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }), 500
+        return jsonify(error_response_body(e)), 500
 
 
 # ============== API 2: Build Graph ==============
@@ -517,11 +513,7 @@ def build_graph():
         })
         
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }), 500
+        return jsonify(error_response_body(e)), 500
 
 
 # ============== Task Query API ==============
@@ -582,11 +574,7 @@ def get_graph_data(graph_id: str):
         })
         
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }), 500
+        return jsonify(error_response_body(e)), 500
 
 
 @graph_bp.route('/delete/<graph_id>', methods=['DELETE'])
@@ -610,8 +598,4 @@ def delete_graph(graph_id: str):
         })
         
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }), 500
+        return jsonify(error_response_body(e)), 500

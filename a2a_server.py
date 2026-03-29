@@ -61,6 +61,18 @@ AGENT_CARD = {
 tasks: dict[str, dict] = {}
 
 
+@app.get("/health")
+async def health():
+    """Health check endpoint for monitoring."""
+    return JSONResponse(content={
+        "status": "healthy",
+        "agent": "microfish",
+        "port": 5001,
+        "backend_url": MICROFISH_BACKEND_URL,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+
+
 @app.get("/.well-known/agent.json")
 async def agent_card():
     return JSONResponse(content=AGENT_CARD)
